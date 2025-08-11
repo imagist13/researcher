@@ -6,7 +6,7 @@ import styles from './HomepageFeatures.module.css';
 const FeatureList = [
   {
     title: 'GPT Researcher',
-    Svg: require('../../static/img/gptr-logo.png').default,
+    Svg: require('../../static/img/gptr-logo.svg').default,
     docLink: './docs/gpt-researcher/getting-started/getting-started',
     description: (
       <>

@@ -23,11 +23,17 @@ _SUPPORTED_PROVIDERS = {
     "custom",
     "bedrock",
     "aimlapi",
+    "none",
 }
 
 
 class Memory:
     def __init__(self, embedding_provider: str, model: str, **embdding_kwargs: Any):
+        # 处理禁用嵌入的情况
+        if embedding_provider == "none" or embedding_provider is None:
+            self._embeddings = None
+            return
+            
         _embeddings = None
         match embedding_provider:
             case "custom":
@@ -96,8 +102,23 @@ class Memory:
                 _embeddings = MistralAIEmbeddings(model=model, **embdding_kwargs)
             case "huggingface":
                 from langchain_huggingface import HuggingFaceEmbeddings
+                
+                # 优化HuggingFace嵌入模型配置
+                optimized_kwargs = {
+                    "model_kwargs": {
+                        'device': 'cpu',  # 明确指定设备
+                        'trust_remote_code': True
+                    },
+                    "encode_kwargs": {
+                        'normalize_embeddings': True,  # 标准化嵌入
+                        'batch_size': 32  # 批处理大小
+                        # 移除show_progress_bar避免参数冲突
+                    },
+                    "cache_folder": os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "transformers"),
+                    **embdding_kwargs
+                }
 
-                _embeddings = HuggingFaceEmbeddings(model_name=model, **embdding_kwargs)
+                _embeddings = HuggingFaceEmbeddings(model_name=model, **optimized_kwargs)
             case "nomic":
                 from langchain_nomic import NomicEmbeddings
 
@@ -131,6 +152,7 @@ class Memory:
                 raise Exception("Embedding not found.")
 
         self._embeddings = _embeddings
-
+        
     def get_embeddings(self):
+        """获取嵌入模型实例，如果禁用则返回None"""
         return self._embeddings

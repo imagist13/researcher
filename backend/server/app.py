@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-from backend.chat.chat import ChatAgentWithMemory
+from ..chat.chat import ChatAgentWithMemory
 
 logger = logging.getLogger(__name__)
 

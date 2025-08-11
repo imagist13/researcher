@@ -19,7 +19,10 @@ const AccessReport: React.FC<AccessReportProps> = ({ accessData, chatBoxSettings
   const getReportLink = (dataType: 'pdf' | 'docx' | 'json'): string => {
     // Early return if path is not available
     if (!accessData?.[dataType]) {
-      console.warn(`No ${dataType} path provided`);
+      // 只在开发模式下输出警告，避免控制台噪音
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`No ${dataType} path provided`);
+      }
       return '#';
     }
 

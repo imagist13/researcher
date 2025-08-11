@@ -6,9 +6,9 @@ import "./globals.css";
 
 const inter = Lexend({ subsets: ["latin"] });
 
-let title = "GPT Researcher";
+let title = "GPT Researcher - AI智能研究助手";
 let description =
-  "LLM based autonomous agent that conducts local and web research on any topic and generates a comprehensive report with citations.";
+  "基于大语言模型的自主研究代理，能够进行本地和网络研究，生成包含引用的全面报告。";
 let url = "https://github.com/assafelovic/gpt-researcher";
 let ogimage = "/favicon.ico";
 let sitename = "GPT Researcher";
@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html className="gptr-root" lang="en">
+    <html className="gptr-root" lang="zh-CN">
       <head>
         <PlausibleProvider domain="localhost:3000" />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!} />

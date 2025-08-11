@@ -120,7 +120,7 @@ const Hero: FC<THeroProps> = ({
             variants={fadeInUp}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <div className="mb-2 xs:mb-3 sm:mb-1 md:mb-0">Say Goodbye to</div>
+            <div className="mb-2 xs:mb-3 sm:mb-1 md:mb-0">告别漫长的</div>
             <span
               style={{
                 backgroundImage: 'linear-gradient(to right, #0cdbb6, #1fd0f0, #06dbee)',
@@ -131,7 +131,7 @@ const Hero: FC<THeroProps> = ({
                 paddingBottom: '0.1em'
               }}
             >
-              Hours of Research
+              研究时光
             </span>
           </motion.h1>
           <motion.h2 
@@ -139,7 +139,7 @@ const Hero: FC<THeroProps> = ({
             variants={fadeInUp}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            Say Hello to GPT Researcher, your AI partner for instant insights and comprehensive research
+欢迎使用，您的AI研究伙伴，提供即时洞察和全面研究
           </motion.h2>
           
           {/* Powered by badge */}
@@ -297,17 +297,17 @@ type suggestionType = {
 const suggestions: suggestionType[] = [
   {
     id: 1,
-    name: "Stock analysis on ",
+    name: "AI技术发展趋势分析",
     icon: "/img/stock2.svg",
   },
   {
     id: 2,
-    name: "Help me plan an adventure to ",
+    name: "科技创新商业模式研究",
     icon: "/img/hiker.svg",
   },
   {
     id: 3,
-    name: "What are the latest news on ",
+    name: "数字化转型案例分析",
     icon: "/img/news.svg",
   },
 ];

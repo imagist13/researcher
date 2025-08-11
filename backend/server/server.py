@@ -10,18 +10,19 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from backend.server.websocket_manager import WebSocketManager
-from backend.server.server_utils import (
+from .websocket_manager import WebSocketManager
+from .server_utils import (
     get_config_dict, sanitize_filename,
     update_environment_variables, handle_file_upload, handle_file_deletion,
     execute_multi_agents, handle_websocket_communication
 )
 
-from backend.server.websocket_manager import run_agent
-from backend.utils import write_md_to_word, write_md_to_pdf
+from .websocket_manager import run_agent
+from ..utils import write_md_to_word, write_md_to_pdf
 from gpt_researcher.utils.logging_config import setup_research_logging
 from gpt_researcher.utils.enum import Tone
-from backend.chat.chat import ChatAgentWithMemory
+from ..chat.chat import ChatAgentWithMemory
+from .scheduled_research_routes import router as scheduled_research_router
 
 import logging
 
@@ -82,6 +83,9 @@ templates = Jinja2Templates(directory="./frontend")
 
 # WebSocket manager
 manager = WebSocketManager()
+
+# Include routers
+app.include_router(scheduled_research_router)
 
 # Middleware
 app.add_middleware(

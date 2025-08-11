@@ -9,11 +9,15 @@ from typing import Awaitable, Dict, List, Any
 from fastapi.responses import JSONResponse, FileResponse
 from gpt_researcher.document.document import DocumentLoader
 from gpt_researcher import GPTResearcher
-from backend.utils import write_md_to_pdf, write_md_to_word, write_text_to_md
+from gpt_researcher.actions import stream_output
+from multi_agents.main import run_research_task
+from ..utils import write_md_to_pdf, write_md_to_word, write_text_to_md
 from pathlib import Path
 from datetime import datetime
 from fastapi import HTTPException
 import logging
+
+from .error_handler import create_error_response, generate_error_report
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -127,27 +131,36 @@ def sanitize_filename(filename: str) -> str:
 
 
 async def handle_start_command(websocket, data: str, manager):
-    json_data = json.loads(data[6:])
-    (
-        task,
-        report_type,
-        source_urls,
-        document_urls,
-        tone,
-        headers,
-        report_source,
-        query_domains,
-        mcp_enabled,
-        mcp_strategy,
-        mcp_configs,
-    ) = extract_command_data(json_data)
+    try:
+        json_data = json.loads(data[6:])
+        (
+            task,
+            report_type,
+            source_urls,
+            document_urls,
+            tone,
+            headers,
+            report_source,
+            query_domains,
+            mcp_enabled,
+            mcp_strategy,
+            mcp_configs,
+        ) = extract_command_data(json_data)
 
-    if not task or not report_type:
-        print("❌ Error: Missing task or report_type")
+        if not task or not report_type:
+            print("❌ Error: Missing task or report_type")
+            await websocket.send_json({
+                "type": "logs",
+                "content": "error", 
+                "output": f"Missing required parameters - task: {task}, report_type: {report_type}"
+            })
+            return
+    except Exception as e:
+        print(f"❌ Error parsing command data: {e}")
         await websocket.send_json({
             "type": "logs",
-            "content": "error", 
-            "output": f"Missing required parameters - task: {task}, report_type: {report_type}"
+            "content": "error",
+            "output": f"Error parsing request data: {str(e)}"
         })
         return
 
@@ -163,25 +176,50 @@ async def handle_start_command(websocket, data: str, manager):
 
     sanitized_filename = sanitize_filename(f"task_{int(time.time())}_{task}")
 
-    report = await manager.start_streaming(
-        task,
-        report_type,
-        report_source,
-        source_urls,
-        document_urls,
-        tone,
-        websocket,
-        headers,
-        query_domains,
-        mcp_enabled,
-        mcp_strategy,
-        mcp_configs,
-    )
-    report = str(report)
-    file_paths = await generate_report_files(report, sanitized_filename)
-    # Add JSON log path to file_paths
-    file_paths["json"] = os.path.relpath(logs_handler.log_file)
-    await send_file_paths(websocket, file_paths)
+    try:
+        report = await manager.start_streaming(
+            task,
+            report_type,
+            report_source,
+            source_urls,
+            document_urls,
+            tone,
+            websocket,
+            headers,
+            query_domains,
+            mcp_enabled,
+            mcp_strategy,
+            mcp_configs,
+        )
+        report = str(report)
+        file_paths = await generate_report_files(report, sanitized_filename)
+        # Add JSON log path to file_paths
+        file_paths["json"] = os.path.relpath(logs_handler.log_file)
+        await send_file_paths(websocket, file_paths)
+        
+    except Exception as e:
+        logger.error(f"Research task failed: {str(e)}")
+        
+        # 使用新的错误处理器创建标准化错误响应
+        error_response = create_error_response(e, task, report_type)
+        
+        # 发送详细错误信息到前端
+        await logs_handler.send_json(error_response)
+        
+        # 生成错误报告文件
+        error_report = generate_error_report(e, task, report_type)
+        
+        try:
+            file_paths = await generate_report_files(error_report, f"{sanitized_filename}_error")
+            file_paths["json"] = os.path.relpath(logs_handler.log_file)
+            await send_file_paths(websocket, file_paths)
+        except Exception as file_error:
+            logger.error(f"Failed to generate error report files: {file_error}")
+            await websocket.send_json({
+                "type": "logs",
+                "content": "error",
+                "output": f"Failed to generate error report: {str(file_error)}"
+            })
 
 
 async def handle_human_feedback(data: str):

@@ -128,3 +128,12 @@ zstandard>=0.23.0
 # Model Context Protocol support (optional)
 mcp>=1.0.0
 langchain-mcp-adapters>=0.1.0  # LangChain MCP adapters for tool integration
+
+# Scheduled task support
+apscheduler>=3.10.4
+
+# AI/ML dependencies for embeddings and models
+sentence-transformers>=2.2.2
+transformers>=4.30.0
+torch>=2.0.0
+langchain-huggingface>=0.3.0

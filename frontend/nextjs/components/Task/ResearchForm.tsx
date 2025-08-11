@@ -100,7 +100,7 @@ export default function ResearchForm({
     >
       <div className="form-group">
         <label htmlFor="report_type" className="agent_question">
-          Report Type{" "}
+          报告类型{" "}
         </label>
         <select
           name="report_type"
@@ -110,19 +110,19 @@ export default function ResearchForm({
           required
         >
           <option value="research_report">
-            Summary - Short and fast (~2 min)
+            摘要 - 简短快速 (~2 分钟)
           </option>
-          <option value="deep">Deep Research Report</option>
-          <option value="multi_agents">Multi Agents Report</option>
+          <option value="deep">深度研究报告</option>
+          <option value="multi_agents">多代理报告</option>
           <option value="detailed_report">
-            Detailed - In depth and longer (~5 min)
+            详细 - 深入全面 (~5 分钟)
           </option>
         </select>
       </div>
 
       <div className="form-group">
         <label htmlFor="report_source" className="agent_question">
-          Report Source{" "}
+          报告来源{" "}
         </label>
         <select
           name="report_source"
@@ -131,9 +131,9 @@ export default function ResearchForm({
           className="form-control-static"
           required
         >
-          <option value="web">The Internet</option>
-          <option value="local">My Documents</option>
-          <option value="hybrid">Hybrid</option>
+          <option value="web">互联网</option>
+          <option value="local">我的文档</option>
+          <option value="hybrid">混合模式</option>
         </select>
       </div>
 
@@ -156,13 +156,13 @@ export default function ResearchForm({
         <div className="mt-4 domain_filters">
           <div className="flex gap-2 mb-4">
           <label htmlFor="domain_filters" className="agent_question">
-          Filter by domain{" "}
+          按域名筛选{" "}
         </label>
             <input
               type="text"
               value={newDomain}
               onChange={(e) => setNewDomain(e.target.value)}
-              placeholder="Filter by domain (e.g., techcrunch.com)"
+              placeholder="按域名筛选 (例如: techcrunch.com)"
               className="input-static"
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
@@ -176,7 +176,7 @@ export default function ResearchForm({
               onClick={handleAddDomain}
               className="button-static"
             >
-              Add Domain
+              添加域名
             </button>
           </div>
 
