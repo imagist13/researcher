@@ -147,14 +147,15 @@ python main.py
 
 # 看到以下信息表示启动成功：
 # INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-```
+
 # 前端启动 
+
 cd frontend/nextjs
 npm install
 npm run dev
 
-# 访问 http://localhost:3000
-
+#访问 http://localhost:3000
+```
 
 ## 🤖 AI任务逻辑架构
 

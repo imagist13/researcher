@@ -11,6 +11,8 @@ api:
   openai:
     api_key: ''
     enabled: false
+  
+  
   search:
     tavily:
       api_key: 
