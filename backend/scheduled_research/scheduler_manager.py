@@ -315,39 +315,48 @@ class ScheduledResearchManager:
             raise
     
     async def pause_task(self, task_id: str) -> bool:
-        """暂停任务"""
+        """暂停任务（改进版）"""
         try:
             job_id = f"research_task_{task_id}"
             job = self.scheduler.get_job(job_id)
             
+            # 移除job而不是暂停，避免重启后状态不一致
             if job:
-                self.scheduler.pause_job(job_id)
-                # 更新数据库状态
-                ScheduledTaskDAO.update_task(task_id, {"is_active": False})
-                logger.info(f"Paused scheduled task: {task_id}")
-                return True
+                self.scheduler.remove_job(job_id)
+                logger.info(f"Removed job for paused task: {task_id}")
             
-            return False
+            # 更新数据库状态
+            ScheduledTaskDAO.update_task(task_id, {
+                "is_active": False,
+                "updated_at": datetime.now()
+            })
+            logger.info(f"Paused scheduled task: {task_id}")
+            return True
             
         except Exception as e:
             logger.error(f"Failed to pause scheduled task {task_id}: {e}")
             raise
     
     async def resume_task(self, task_id: str) -> bool:
-        """恢复任务"""
+        """恢复任务（改进版）"""
         try:
-            job_id = f"research_task_{task_id}"
-            job = self.scheduler.get_job(job_id)
+            # 1. 更新数据库状态
+            ScheduledTaskDAO.update_task(task_id, {
+                "is_active": True,
+                "updated_at": datetime.now()
+            })
             
-            if job:
-                self.scheduler.resume_job(job_id)
-                # 更新数据库状态
-                ScheduledTaskDAO.update_task(task_id, {"is_active": True})
-                logger.info(f"Resumed scheduled task: {task_id}")
-                return True
+            # 2. 获取更新后的任务信息
+            task = ScheduledTaskDAO.get_task_by_id(task_id)
+            if not task:
+                logger.error(f"Task not found: {task_id}")
+                return False
+            
+            # 3. 重新调度任务（确保job正确创建）
+            await self._schedule_task(task)
+            logger.info(f"Resumed scheduled task: {task_id}")
+            return True
                 
-            return False
-            
         except Exception as e:
             logger.error(f"Failed to resume scheduled task {task_id}: {e}")
             raise

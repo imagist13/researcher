@@ -202,6 +202,11 @@ class Config:
 
         if embedding_str is None:
             return None, None
+        
+        # 特殊处理 "none" 情况
+        if embedding_str.lower() == "none":
+            return "none", None
+            
         try:
             embedding_provider, embedding_model = embedding_str.split(":", 1)
             assert embedding_provider in _SUPPORTED_PROVIDERS, (
@@ -212,7 +217,7 @@ class Config:
         except ValueError:
             raise ValueError(
                 "Set EMBEDDING = '<embedding_provider>:<embedding_model>' "
-                "Eg 'openai:text-embedding-3-large'"
+                "Eg 'openai:text-embedding-3-large' or 'none' to disable embeddings"
             )
 
     def validate_doc_path(self):

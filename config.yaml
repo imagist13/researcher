@@ -1,0 +1,90 @@
+# =============================================================================
+# GPT Researcher 配置文件 (YAML格式) - 自动从.env迁移
+# =============================================================================
+# 这个配置文件由迁移工具自动生成，替代了原来的config.env文件
+# 所有原有的配置都已经保留并转换为YAML格式
+
+api:
+  deepseek:
+    api_key: 
+    enabled: true
+  openai:
+    api_key: ''
+    enabled: false
+  search:
+    tavily:
+      api_key: 
+      enabled: true
+    google:
+      api_key: ''
+      cx_key: ''
+      enabled: false
+    bing:
+      api_key: ''
+      enabled: false
+    serper:
+      api_key: ''
+      enabled: false
+    serpapi:
+      api_key: ''
+      enabled: false
+    searchapi:
+      api_key: ''
+      enabled: false
+    searx:
+      url: ''
+      enabled: false
+llm:
+  fast_model: deepseek:deepseek-chat
+  smart_model: deepseek:deepseek-chat
+  strategic_model: deepseek:deepseek-chat
+  temperature: 0.7
+  reasoning_effort: medium
+retrieval:
+  primary_retriever: duckduckgo
+  max_search_results_per_query: 5
+  embedding:
+    provider: none
+    model: none
+report:
+  total_words: 1500
+  format: APA
+  language: chinese
+  default_source: web
+paths:
+  documents: ./my-docs
+  outputs: ./outputs
+  logs: ./logs
+network:
+  proxy:
+    http: ''
+    https: ''
+    enabled: false
+  timeout:
+    connect: 30
+    read: 60
+logging:
+  level: INFO
+  verbose: false
+  modules:
+    fontTools: WARNING
+    transformers: WARNING
+scheduled_research:
+  enabled: true
+  default_interval: 3600
+  max_concurrent_tasks: 3
+advanced:
+  multi_agents:
+    enabled: true
+    max_agents: 5
+  mcp:
+    enabled: false
+    servers: []
+    allowed_root_paths: []
+  memory:
+    enabled: true
+    cache_size: 1000
+development:
+  debug: false
+  test_mode: false
+  mock_responses: false

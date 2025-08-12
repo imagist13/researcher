@@ -52,44 +52,108 @@
 Python 3.9+
 Node.js 18+
 
-# API密钥 (任选其一)
-OPENAI_API_KEY=your_openai_key
-DEEPSEEK_API_KEY=your_deepseek_key
-```
+### 2. 项目安装
 
-### 快速启动
-
-#### 方式一：使用 Docker
 ```bash
 # 克隆项目
-git clone https://github.com/your-repo/gpt-researcher.git
-cd gpt-researcher
+git clone <your-repo-url>
+cd researcher
 
-# 配置环境变量
-cp config.env.example config.env
-# 编辑 config.env 添加你的API密钥
+# 安装依赖
+pip install -r requirements.txt
 
-# 启动完整服务
-docker-compose up -d
-
-# 访问应用
-open http://localhost:3000
+# 验证安装
+python -c "import yaml; print('YAML支持正常')"
 ```
 
-#### 方式二：手动启动
-```bash
-# 后端启动
-cd backend
-pip install -r requirements.txt
-python -m uvicorn server.main:app --host 0.0.0.0 --port 8000
+### 3. 配置系统（⭐ 重要）
 
-# 前端启动 (新终端)
+#### 🆕 YAML配置文件
+
+项目已升级到YAML配置系统，配置文件为 `config.yaml`。
+
+#### 基础配置
+
+编辑 `config.yaml` 文件：
+
+```yaml
+# 核心API配置
+api:
+  # DeepSeek API（主要LLM提供商）
+  deepseek:
+    api_key: "your_deepseek_api_key_here"  # 必填
+    enabled: true
+  
+  # 搜索引擎配置
+  search:
+    tavily:
+      api_key: "your_tavily_api_key_here"  # 可选，但推荐
+      enabled: true
+
+# LLM模型配置
+llm:
+  fast_model: "deepseek:deepseek-chat"
+  smart_model: "deepseek:deepseek-chat"
+  strategic_model: "deepseek:deepseek-chat"
+  temperature: 0.7
+
+# 搜索配置
+retrieval:
+  primary_retriever: "duckduckgo"  # 免费搜索引擎
+  max_search_results_per_query: 5
+  embedding:
+    provider: "none"  # 禁用嵌入以获得最佳性能
+    model: "none"
+
+# 报告配置
+report:
+  total_words: 1500
+  format: "APA"
+  language: "chinese"
+  default_source: "web"
+```
+
+#### 🔑 API密钥获取
+
+**1. DeepSeek API密钥（必需）**
+- 访问：[DeepSeek开放平台](https://platform.deepseek.com/)
+- 注册账户并创建API密钥
+- 复制密钥到 `api.deepseek.api_key`
+
+**2. Tavily搜索API（推荐）**
+- 访问：[Tavily API](https://tavily.com/)
+- 获取免费API密钥
+- 复制到 `api.search.tavily.api_key`
+
+**3. 其他API密钥（可选）**
+- Google Search API
+- Bing Search API
+- OpenAI API（仅用于嵌入）
+
+#### 配置验证
+
+```bash
+# 运行配置验证
+python -c "from config_manager import ConfigManager; c=ConfigManager(); print('✅ 配置验证成功')"
+```
+
+### 4. 启动服务
+
+#### 开发模式启动
+
+```bash
+# 后端启动 
+python main.py
+
+# 看到以下信息表示启动成功：
+# INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
+# 前端启动 
 cd frontend/nextjs
 npm install
 npm run dev
 
 # 访问 http://localhost:3000
-```
 
 
 ## 🤖 AI任务逻辑架构
